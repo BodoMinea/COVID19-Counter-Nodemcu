@@ -14,17 +14,15 @@ Array.prototype.max = function() {
 
 app.get('/', (req, res) => {
 
-request('https://www.biziday.ro/situatia-infectiilor-cu-coronavirus-din-romania/', function (error, response, html) {
-  if (!error && response.statusCode == 200) {
-    try {
-       $ = cheerio.load(html);
-       result = ($('title').text().match(/\d+/g) || []).map(n => parseInt(n));
-       val = result.max().toString();
-       last = val;
-       console.log(Date()+" | Requested update, val: "+val)
-       res.send(val);
-    } catch(err) { res.send(last)  }
-  } else res.send(last);
+request('https://api1.datelazi.ro/api/v2/data/ui-data', function (error, response, data) {
+        if (!error && response.statusCode == 200) {
+                try {
+                         val = JSON.parse(data).quickStats.totals.confirmed.toString();
+                         last = val;
+                         console.log(Date()+" | Requested update, val: "+val)
+                         res.send(val);
+                } catch(err) { res.send(last)  }
+        } else res.send(last);
 });
 
 })
